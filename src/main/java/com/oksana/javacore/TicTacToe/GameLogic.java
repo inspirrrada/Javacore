@@ -1,66 +1,161 @@
 package main.java.com.oksana.javacore.TicTacToe;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Random;
 
 public class GameLogic extends Field {
-    Field field = new Field();
+    private char markPlayer;
+    private char markX = 'X', mark0 = '0', markEmpty = ' ';
+
+    private int numEntered = 0;
+    private int score;
+
+    private boolean movePerson = true;
+    private boolean isTableFull = false;
+
+    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+    private int tableScore[] = new int[9];
+
+    private Field field;
 
     //отобразить правила игры
     void gameRules() {
-        System.out.println();
-        System.out.println("Let's play Tic Tac Toe game!");
-        System.out.println();
-        System.out.println("==> You are X, the computer is 0. Players take turns putting their marks in empty squares.");
-        System.out.println("==> For choosing need cell, just enter its number from 1 to 9, according to the table below.");
+        final String RULE_STRING_1 = "Let's play Tic Tac Toe game!";
+        final String RULE_STRING_2 = "==> You are X, the computer is 0. Players take turns putting their marks in empty squares.";
+        final String RULE_STRING_3 = "==> For choosing need cell, just enter its number from 1 to 9, according to the table below.";
+        final String RULE_STRING_4 = "==> The first player to get 3 of his marks in a row (up, down, across, or diagonally) is the winner.";
+        final String RULE_STRING_5 = "==> When all 9 squares are full, the game is over. If no player has 3 marks in a row, the game ends in a tie.";
+        final String RULE_STRING_6 = "Let's start!";
 
-        field.displayTableExample();
+        System.out.println();
+        System.out.println(RULE_STRING_1);
+        System.out.println();
+        System.out.println(RULE_STRING_2);
+        System.out.println(RULE_STRING_3);
 
-        System.out.println("==> The first player to get 3 of his marks in a row (up, down, across, or diagonally) is the winner.");
-        System.out.println("==> When all 9 squares are full, the game is over. If no player has 3 marks in a row, the game ends in a tie.");
+        displayTableExample();
+
+        System.out.println(RULE_STRING_4);
+        System.out.println(RULE_STRING_5);
         System.out.println();
-        System.out.println("Let's start!");
+        System.out.println(RULE_STRING_6);
         System.out.println();
+    }
+
+    //отобразить игровую таблицу
+    void displayTable() {
+        System.out.println("     |     |     ");
+
+        for (int i = 0; i < getTABLE().length; i++) {
+            System.out.print(" " + " ");
+            System.out.print(getTABLE()[i] + " ");
+//--------------------------------------------------
+            if ( (i+1) % 3 == 0 && (i+1) != 9 ) {
+                System.out.println();
+                System.out.println("_____|_____|_____");
+                System.out.println("     |     |     ");
+            } else if ( (i+1) == 9 ) {
+                System.out.println("");
+                System.out.println("     |     |     ");
+            } else {
+                System.out.print(" |");
+            }
+//---------------------------------------------------
+        }
+
+    }
+
+    //отобразить пример таблицы
+    void displayTableExample() {
+        int tableExample[] = new int[9];
+
+        System.out.println("     |     |     ");
+
+        for (int i = 0; i < tableExample.length; i++) {
+
+            tableExample[i] = i+1;
+
+            System.out.print(" " + " ");
+            System.out.print(tableExample[i] + " ");
+//-----------------------------------------------------
+            if ( (i+1) % 3 == 0 && (i+1) != 9 ) {
+                System.out.println();
+                System.out.println("_____|_____|_____");
+                System.out.println("     |     |     ");
+            } else if ( (i+1) == 9 ) {
+                System.out.println("");
+                System.out.println("     |     |     ");
+            } else {
+                System.out.print(" |");
+            }
+//-----------------------------------------------------
+        }
+
+    }
+
+    //тестовый метод для проверки работы подсчета очков
+    void displayTableScore() {
+        System.out.println("     |     |     ");
+
+        for (int i = 0; i < tableScore.length; i++) {
+
+            System.out.print(" " + " ");
+            System.out.print(tableScore[i] + " ");
+
+            if ( (i+1) % 3 == 0 && (i+1) != 9 ) {
+                System.out.println();
+                System.out.println("_____|_____|_____");
+                System.out.println("     |     |     ");
+            } else if ( (i+1) == 9 ) {
+                System.out.println("");
+                System.out.println("     |     |     ");
+            } else {
+                System.out.print(" |");
+            }
+        }
     }
 
     //записать ход в таблицу
     void recordMoveToTable() {
-        if (table[numEntered-1] == markEmpty) {
+        if (getTABLE()[numEntered-1] == markEmpty) {
             switch (numEntered) {
                 case 1:
-                    table[0] = markPlayer;
+                    getTABLE()[0] = markPlayer;
                     tableScore[0] = score;
                     break;
                 case 2:
-                    table[1] = markPlayer;
+                    getTABLE()[1] = markPlayer;
                     tableScore[1] = score;
                     break;
                 case 3:
-                    table[2] = markPlayer;
+                    getTABLE()[2] = markPlayer;
                     tableScore[2] = score;
                     break;
                 case 4:
-                    table[3] = markPlayer;
+                    getTABLE()[3] = markPlayer;
                     tableScore[3] = score;
                     break;
                 case 5:
-                    table[4] = markPlayer;
+                    getTABLE()[4] = markPlayer;
                     tableScore[4] = score;
                     break;
                 case 6:
-                    table[5] = markPlayer;
+                    getTABLE()[5] = markPlayer;
                     tableScore[5] = score;
                     break;
                 case 7:
-                    table[6] = markPlayer;
+                    getTABLE()[6] = markPlayer;
                     tableScore[6] = score;
                     break;
                 case 8:
-                    table[7] = markPlayer;
+                    getTABLE()[7] = markPlayer;
                     tableScore[7] = score;
                     break;
                 case 9:
-                    table[8] = markPlayer;
+                    getTABLE()[8] = markPlayer;
                     tableScore[8] = score;
                     break;
             }
@@ -95,9 +190,9 @@ public class GameLogic extends Field {
 
     //проверка таблицы на заполнение (ничья)
     boolean checkTableFull() {
-        for (int i = 0; i < table.length; i++) {
+        for (int i = 0; i < getTABLE().length; i++) {
             //если находит пустую ячейку, значит таблица не переполнена - выход из цикла
-            if (table[i] == markEmpty) {
+            if (getTABLE()[i] == markEmpty) {
                 isTableFull = false;
                 break;
             //если пустой ячейки нет, значит таблица переполнена - конец игры
@@ -127,10 +222,10 @@ public class GameLogic extends Field {
                         }
                     } while (numByPerson > 9);
 
-                    if (table[numByPerson-1] != markEmpty) {
+                    if (getTABLE()[numByPerson-1] != markEmpty) {
                         System.out.println("Enter number of free cell!");
                     }
-                } while (table[numByPerson-1] != markEmpty);
+                } while (getTABLE()[numByPerson-1] != markEmpty);
 
 
                 numEntered = numByPerson;
@@ -159,7 +254,7 @@ public class GameLogic extends Field {
 
                 do {
                     numByPC = random.nextInt(9) + 1;
-                } while (table[numByPC-1] != markEmpty);
+                } while (getTABLE()[numByPC-1] != markEmpty);
 
 
                 numEntered = numByPC;
@@ -183,5 +278,12 @@ public class GameLogic extends Field {
 
             }
         }
+    }
+
+    //запуск игры
+    void start() throws IOException {
+        field = new Field(); //тут сработает конструктор на создание массива из 9 элементов
+        gameRules();
+        game();
     }
 }
